@@ -2,25 +2,19 @@
 
 #include <algorithm>
 #include <iostream>
-#include <sstream>
-#include <string>
 #include <unordered_map>
 
 using namespace std;
 
 pair<vector<int>, vector<int>> parse(istream &in) {
-    string line;
     vector<int> lefts;
     vector<int> rights;
 
-    while (getline(in, line)) {
-        istringstream values(line);
-
-        string left, right;
-        values >> left >> right;
-
-        lefts.push_back(stoi(left));
-        rights.push_back(stoi(right));
+    int left, right;
+    while (!in.eof()) {
+        in >> left >> right;
+        lefts.push_back(left);
+        rights.push_back(right);
     }
 
     sort(lefts.begin(), lefts.end());
