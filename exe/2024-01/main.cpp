@@ -23,6 +23,9 @@ pair<vector<int>, vector<int>> parse(istream &in) {
         rights.push_back(stoi(right));
     }
 
+    sort(lefts.begin(), lefts.end());
+    sort(rights.begin(), rights.end());
+
     return pair(lefts, rights);
 }
 
@@ -30,9 +33,6 @@ int main() {
     auto data = parse(std::cin);
 
     auto [lefts, rights] = data;
-
-    sort(lefts.begin(), lefts.end());
-    sort(rights.begin(), rights.end());
 
     auto diff = 0;
     for (auto i = 0; i < lefts.size(); i++) {
