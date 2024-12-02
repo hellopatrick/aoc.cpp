@@ -15,12 +15,13 @@ vector<vector<int>> parse() {
     vector<vector<int>> reports;
 
     while (getline(cin, line)) {
-        istringstream iss(line);
-        string s;
         vector<int> report;
 
-        while (getline(iss, s, ' ')) {
-            report.push_back(stoi(s));
+        istringstream stream(line);
+        int s;
+
+        while (stream >> s) {
+            report.push_back(s);
         }
 
         reports.push_back(report);
@@ -54,8 +55,6 @@ bool is_safe(vector<int> report) {
 }
 
 bool could_be_safe(vector<int> report) {
-    int sign = 0;
-
     for (int i = 0; i < report.size(); i++) {
         vector<int> adjusted_report;
 
