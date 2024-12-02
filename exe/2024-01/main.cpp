@@ -1,18 +1,18 @@
 #include "lib.h"
 
 #include <algorithm>
-#include <iostream>
+#include <cstdio>
 #include <unordered_map>
+#include <vector>
 
 using namespace std;
 
-pair<vector<int>, vector<int>> parse(istream &in) {
+pair<vector<int>, vector<int>> parse_input() {
     vector<int> lefts;
     vector<int> rights;
 
     int left, right;
-    while (!in.eof()) {
-        in >> left >> right;
+    while (scanf("%d %d", &left, &right) != EOF) {
         lefts.push_back(left);
         rights.push_back(right);
     }
@@ -24,7 +24,7 @@ pair<vector<int>, vector<int>> parse(istream &in) {
 }
 
 int main() {
-    auto data = parse(std::cin);
+    auto data = parse_input();
 
     auto [lefts, rights] = data;
 
@@ -32,8 +32,6 @@ int main() {
     for (auto i = 0; i < lefts.size(); i++) {
         diff += abs(lefts[i] - rights[i]);
     }
-
-    printf("part 1: %d\n", diff);
 
     unordered_map<int, int> tally;
     for (auto &r : rights) {
@@ -45,6 +43,7 @@ int main() {
         sim += (l * tally[l]);
     }
 
+    printf("part 1: %d\n", diff);
     printf("part 2: %d\n", sim);
 
     return 0;
