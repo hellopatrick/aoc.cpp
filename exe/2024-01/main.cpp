@@ -1,6 +1,7 @@
 #include "lib.h"
 
 #include <algorithm>
+#include <chrono>
 #include <cstdio>
 #include <unordered_map>
 #include <vector>
@@ -8,8 +9,9 @@
 using namespace std;
 
 pair<vector<int>, vector<int>> parse_input() {
-    vector<int> lefts;
-    vector<int> rights;
+    vector<int> lefts, rights;
+    lefts.reserve(1000);
+    rights.reserve(1000);
 
     int left, right;
     while (scanf("%d %d", &left, &right) != EOF) {
@@ -24,6 +26,8 @@ pair<vector<int>, vector<int>> parse_input() {
 }
 
 int main() {
+    auto start = chrono::high_resolution_clock::now();
+
     auto data = parse_input();
 
     auto [lefts, rights] = data;
@@ -43,8 +47,12 @@ int main() {
         sim += (l * tally[l]);
     }
 
+    auto end = chrono::high_resolution_clock::now();
+    auto dur = chrono::duration_cast<chrono::microseconds>(end - start);
+
     printf("part 1: %d\n", diff);
     printf("part 2: %d\n", sim);
+    printf("dur:    %lldus\n", dur.count());
 
     return 0;
 }
