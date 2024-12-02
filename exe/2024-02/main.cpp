@@ -57,13 +57,8 @@ bool is_safe(vector<int> report) {
 
 bool could_be_safe(vector<int> report) {
     for (int i = 0; i < report.size(); i++) {
-        vector<int> adjusted_report;
-
-        adjusted_report.reserve(report.size() - 1);
-        adjusted_report.insert(adjusted_report.end(), report.begin(),
-                               report.begin() + i);
-        adjusted_report.insert(adjusted_report.end(), report.begin() + i + 1,
-                               report.end());
+        vector<int> adjusted_report(report.begin(), report.end());
+        adjusted_report.erase(adjusted_report.begin() + i);
 
         if (is_safe(adjusted_report)) {
             return true;
