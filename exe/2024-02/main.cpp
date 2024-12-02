@@ -75,12 +75,12 @@ int main() {
 
     auto part1 = 0;
     for (auto &report : reports) {
-        part1 += is_safe(report) ? 1 : 0;
+        part1 += is_safe(report);
     }
 
     auto part2 = 0;
     for (auto &report : reports) {
-        part2 += (is_safe(report) || could_be_safe(report)) ? 1 : 0;
+        part2 += is_safe(report) || could_be_safe(report);
     }
 
     auto end = std::chrono::high_resolution_clock::now();
