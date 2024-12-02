@@ -5,6 +5,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <ranges>
+#include <scn/scan.h>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -18,11 +20,11 @@ vector<vector<int>> parse_stdin() {
     while (getline(cin, line)) {
         vector<int> report;
 
-        istringstream stream(line);
-        int s;
+        auto input = scn::ranges::subrange{line};
 
-        while (stream >> s) {
-            report.push_back(s);
+        while (auto result = scn::scan<int>(input, "{}")) {
+            report.push_back(result->value());
+            input = result->range();
         }
 
         reports.push_back(report);
