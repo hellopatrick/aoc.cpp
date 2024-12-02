@@ -17,6 +17,7 @@ cat <<EOF > "${exe}/main.cpp"
 #include "lib.h"
 
 #include <chrono>
+#include <print>
 
 int parse_stdin() { return 0; }
 
@@ -31,9 +32,9 @@ int main() {
     auto end = std::chrono::high_resolution_clock::now();
     auto dur = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
-    std::printf("part 1: %d\n", part1);
-    std::printf("part 2: %d\n", part2);
-    std::printf("dur:    %lldus\n", dur.count());
+    std::print("part 1: {}\n", part1);
+    std::print("part 2: {}\n", part2);
+    std::print("dur:    {}us\n", dur.count());
 }
 EOF
 

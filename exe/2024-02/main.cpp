@@ -2,12 +2,10 @@
 
 #include <chrono>
 #include <cmath>
-#include <cstdio>
 #include <cstdlib>
 #include <iostream>
-#include <ranges>
+#include <print>
 #include <scn/scan.h>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -89,9 +87,9 @@ int main() {
     auto dur =
         std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
-    std::printf("part 1: %d\n", part1);
-    std::printf("part 2: %d\n", part2);
-    std::printf("dur:    %lldus\n", dur.count());
+    std::print("part 1: {}\n", part1);
+    std::print("part 2: {}\n", part2);
+    std::print("dur:    {}us\n", dur.count());
 
     return 0;
 }

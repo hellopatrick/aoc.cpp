@@ -32,9 +32,9 @@ int main() {
 
     auto [lefts, rights] = data;
 
-    auto diff = 0;
+    auto part1 = 0;
     for (auto i = 0; i < lefts.size(); i++) {
-        diff += abs(lefts[i] - rights[i]);
+        part1 += abs(lefts[i] - rights[i]);
     }
 
     unordered_map<int, int> tally;
@@ -42,17 +42,17 @@ int main() {
         tally[r] += 1;
     }
 
-    auto sim = 0;
+    auto part2 = 0;
     for (auto &l : lefts) {
-        sim += (l * tally[l]);
+        part2 += (l * tally[l]);
     }
 
     auto end = chrono::high_resolution_clock::now();
     auto dur = chrono::duration_cast<chrono::microseconds>(end - start);
 
-    printf("part 1: %d\n", diff);
-    printf("part 2: %d\n", sim);
-    printf("dur:    %lldus\n", dur.count());
+    std::print("part 1: {}\n", part1);
+    std::print("part 2: {}\n", part2);
+    std::print("dur:    {}us\n", dur.count());
 
     return 0;
 }
