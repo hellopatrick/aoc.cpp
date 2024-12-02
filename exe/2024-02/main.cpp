@@ -1,5 +1,6 @@
 #include "lib.h"
 
+#include <chrono>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -10,7 +11,7 @@
 
 using namespace std;
 
-vector<vector<int>> parse() {
+vector<vector<int>> parse_stdin() {
     string line;
     vector<vector<int>> reports;
 
@@ -73,7 +74,9 @@ bool could_be_safe(vector<int> report) {
 }
 
 int main() {
-    auto reports = parse();
+    auto start = std::chrono::high_resolution_clock::now();
+
+    auto reports = parse_stdin();
 
     auto part1 = 0;
     for (auto &report : reports) {
@@ -85,8 +88,13 @@ int main() {
         part2 += (is_safe(report) || could_be_safe(report)) ? 1 : 0;
     }
 
-    printf("part1: %d\n", part1);
-    printf("part2: %d\n", part2);
+    auto end = std::chrono::high_resolution_clock::now();
+    auto dur =
+        std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+
+    std::printf("part 1: %d\n", part1);
+    std::printf("part 2: %d\n", part2);
+    std::printf("dur:    %lldus\n", dur.count());
 
     return 0;
 }

@@ -8,7 +8,7 @@
 
 using namespace std;
 
-pair<vector<int>, vector<int>> parse_input() {
+pair<vector<int>, vector<int>> parse_stdin() {
     vector<int> lefts, rights;
     lefts.reserve(1000);
     rights.reserve(1000);
@@ -28,7 +28,7 @@ pair<vector<int>, vector<int>> parse_input() {
 int main() {
     auto start = chrono::high_resolution_clock::now();
 
-    auto data = parse_input();
+    auto data = parse_stdin();
 
     auto [lefts, rights] = data;
 
