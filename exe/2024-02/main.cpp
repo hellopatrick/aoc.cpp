@@ -3,19 +3,18 @@
 #include <chrono>
 #include <cmath>
 #include <cstdlib>
-#include <iostream>
 #include <print>
 #include <scn/scan.h>
-#include <string>
 #include <vector>
 
 using namespace std;
 
 vector<vector<int>> parse_stdin() {
-    string line;
+    auto lines = aoc::readlines();
+
     vector<vector<int>> reports;
 
-    while (getline(cin, line)) {
+    for (auto &line : lines) {
         vector<int> report;
 
         auto input = scn::ranges::subrange{line};
