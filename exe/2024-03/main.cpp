@@ -13,9 +13,9 @@ std::string parse_stdin() {
     return buffer.str();
 }
 
-const std::string_view mult_pattern = "mul(";
-const std::string_view do_pattern = "do()";
-const std::string_view dont_pattern = "don't()";
+const std::string_view mult_pattern{"mul("};
+const std::string_view do_pattern{"do()"};
+const std::string_view dont_pattern{"don't()"};
 
 int main() {
     auto start = std::chrono::high_resolution_clock::now();
