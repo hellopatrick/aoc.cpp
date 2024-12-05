@@ -17,11 +17,7 @@ struct Ruleset {
     std::unordered_map<int, std::unordered_set<int>> rules;
 
     bool operator()(int const &a, int const &b) const {
-        if (rules.at(b).contains(a)) {
-            return false;
-        }
-
-        return true;
+        return !rules.at(b).contains(a);
     }
 };
 
