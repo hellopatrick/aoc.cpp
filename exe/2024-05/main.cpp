@@ -57,9 +57,9 @@ int main() {
 
     auto [rs, updates] = parse_stdin();
 
-    auto incorrect = std::partition(
-        updates.begin(), updates.end(), [&rs](std::vector<int> i) {
-            return std::is_sorted(i.begin(), i.end(), rs);
+    auto incorrect =
+        std::partition(updates.begin(), updates.end(), [&rs](auto update) {
+            return std::is_sorted(update.begin(), update.end(), rs);
         });
 
     auto part1 = std::transform_reduce(
