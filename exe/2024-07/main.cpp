@@ -6,10 +6,10 @@
 #include <print>
 #include <vector>
 
-using puzzle_t = std::vector<std::pair<uint64_t, std::vector<uint64_t>>>;
+using puzzle = std::vector<std::pair<uint64_t, std::vector<uint64_t>>>;
 
-puzzle_t parse_stdin() {
-    puzzle_t puzzle;
+puzzle parse_stdin() {
+    puzzle puzzle;
 
     auto lines = aoc::readlines();
 
