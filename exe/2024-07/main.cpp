@@ -2,6 +2,7 @@
 #include "scn/scan.h"
 
 #include <chrono>
+#include <iterator>
 #include <print>
 #include <ranges>
 #include <vector>
@@ -39,7 +40,7 @@ long concatable(long target, long digits) {
     return (target % div == digits) ? target / div : 0;
 }
 
-template <class iter>
+template <std::input_iterator iter>
 bool is_ok(auto target, iter start, iter end, bool allow_concat) {
     if (start == end) {
         return target == 1;
