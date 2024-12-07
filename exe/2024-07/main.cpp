@@ -62,9 +62,9 @@ bool is_ok(auto target, iter start, iter end, bool allow_concat) {
 }
 
 int main() {
-    auto start = std::chrono::high_resolution_clock::now();
-
     auto data = parse_stdin();
+
+    auto start = std::chrono::high_resolution_clock::now();
 
     auto part1 = 0l;
     auto part2 = 0l;
