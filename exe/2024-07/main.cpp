@@ -2,7 +2,6 @@
 #include "scn/scan.h"
 
 #include <chrono>
-#include <iterator>
 #include <print>
 #include <ranges>
 #include <vector>
