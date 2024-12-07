@@ -22,9 +22,9 @@ cat <<EOF > "${exe}/main.cpp"
 int parse_stdin() { return 0; }
 
 int main() {
-    auto start = std::chrono::high_resolution_clock::now();
-
     auto data = parse_stdin();
+
+    auto start = std::chrono::high_resolution_clock::now();
 
     auto part1 = 0;
     auto part2 = 0;
