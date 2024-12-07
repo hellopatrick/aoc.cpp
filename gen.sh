@@ -18,8 +18,15 @@ cat <<EOF > "${exe}/main.cpp"
 
 #include <chrono>
 #include <print>
+#include <vector>
 
-int parse_stdin() { return 0; }
+using puzzle_t = std::vector<int>;
+
+puzzle_t parse_stdin() {
+    puzzle_t puzzle;
+
+    return puzzle;
+}
 
 int main() {
     auto data = parse_stdin();

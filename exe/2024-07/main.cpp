@@ -2,23 +2,25 @@
 #include "scn/scan.h"
 
 #include <chrono>
+#include <cstdint>
 #include <print>
-#include <ranges>
 #include <vector>
 
-std::vector<std::pair<long, std::vector<long>>> parse_stdin() {
-    std::vector<std::pair<long, std::vector<long>>> puzzle;
+using puzzle_t = std::vector<std::pair<uint64_t, std::vector<uint64_t>>>;
+
+puzzle_t parse_stdin() {
+    puzzle_t puzzle;
 
     auto lines = aoc::readlines();
 
     for (auto &line : lines) {
-        auto res = scn::scan<long>(line, "{}:");
+        auto res = scn::scan<uint64_t>(line, "{}:");
 
         auto n = res->value();
         auto remaining = res->range();
 
-        std::vector<long> vs;
-        while (auto res = scn::scan<long>(remaining, "{}")) {
+        std::vector<uint64_t> vs;
+        while (auto res = scn::scan<uint64_t>(remaining, "{}")) {
             auto v = res->value();
             vs.emplace_back(v);
             remaining = res->range();
@@ -30,8 +32,8 @@ std::vector<std::pair<long, std::vector<long>>> parse_stdin() {
     return puzzle;
 }
 
-long concatable(long target, long digits) {
-    long div = 10;
+uint64_t concatable(uint64_t target, uint64_t digits) {
+    uint64_t div = 10;
     while (div < digits) {
         div *= 10;
     }
@@ -66,8 +68,8 @@ int main() {
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    auto part1 = 0l;
-    auto part2 = 0l;
+    uint64_t part1 = 0;
+    uint64_t part2 = 0;
 
     for (auto [n, row] : data) {
         if (is_ok(n, row.rbegin(), row.rend(), false)) {
