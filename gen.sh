@@ -20,12 +20,12 @@ cat <<EOF > "${exe}/main.cpp"
 #include <print>
 #include <vector>
 
-using puzzle_t = std::vector<int>;
+using Puzzle = std::vector<int>;
 
-puzzle_t parse_stdin() {
-    puzzle_t puzzle;
+Puzzle parse_stdin() {
+    Puzzle p;
 
-    return puzzle;
+    return p;
 }
 
 int main() {
