@@ -1,3 +1,4 @@
+#include "coord.h"
 #include "lib.h"
 
 #include <chrono>
@@ -6,13 +7,12 @@
 #include <unordered_set>
 #include <vector>
 
-using Puzzle = std::vector<std::vector<int>>;
+using Puzzle = aoc::grid<int>;
 
 Puzzle parse_stdin() {
-    Puzzle p;
-
     auto lines = aoc::readlines();
 
+    std::vector<std::vector<int>> p;
     for (int y = 0; y < lines.size(); y++) {
         auto line = lines.at(y);
 
@@ -24,27 +24,24 @@ Puzzle parse_stdin() {
         p.push_back(row);
     }
 
-    return p;
+    return Puzzle(p);
 }
 
 auto solve(Puzzle const &p, bool uniq) -> int {
     auto sum = 0;
 
-    auto height = p.size();
-    auto width = p[0].size();
+    for (int y = 0; y < p.h; y++) {
+        for (int x = 0; x < p.w; x++) {
+            auto a = p[{x, y}];
 
-    for (int y = 0; y < height; y++) {
-        auto row = p[y];
-
-        for (int x = 0; x < width; x++) {
-            if (row[x] != 0) {
+            if (*a != 0) {
                 continue;
             }
 
             std::unordered_set<aoc::Coord, aoc::CoordHasher> v;
 
             std::queue<aoc::Coord> q;
-            q.emplace(x, y);
+            q.push({x, y});
 
             while (!q.empty()) {
                 auto pt = q.front();
@@ -58,23 +55,23 @@ auto solve(Puzzle const &p, bool uniq) -> int {
                     v.insert(pt);
                 }
 
-                auto val = p[pt.y][pt.x];
+                auto val = *p[pt];
 
                 if (val == 9) {
                     sum++;
                     continue;
                 }
 
-                if (pt.y > 0 && val + 1 == p[pt.y - 1][pt.x]) {
+                if (val + 1 == p[{pt.x, pt.y - 1}]) {
                     q.emplace(pt.x, pt.y - 1);
                 }
-                if (pt.x > 0 && val + 1 == p[pt.y][pt.x - 1]) {
+                if (val + 1 == p[{pt.x - 1, pt.y}]) {
                     q.emplace(pt.x - 1, pt.y);
                 }
-                if (pt.y < height - 1 && val + 1 == p[pt.y + 1][pt.x]) {
+                if (val + 1 == p[{pt.x, pt.y + 1}]) {
                     q.emplace(pt.x, pt.y + 1);
                 }
-                if (pt.x < width - 1 && val + 1 == p[pt.y][pt.x + 1]) {
+                if (val + 1 == p[{pt.x + 1, pt.y}]) {
                     q.emplace(pt.x + 1, pt.y);
                 }
             }
