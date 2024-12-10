@@ -96,7 +96,7 @@ int main() {
     auto dur =
         std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
-    std::print("part 1: {}\n", p1);
-    std::print("part 2: {}\n", p2);
+    std::print("part 1: {} ({})\n", p1, p1 == 638);
+    std::print("part 2: {} ({})\n", p2, p2 == 1289);
     std::print("dur:    {}us\n", dur.count());
 }
