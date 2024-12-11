@@ -1,10 +1,11 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 
 namespace aoc {
 struct Coord {
-    int x, y;
+    int64_t x, y;
 
     bool operator==(const Coord &p) const;
 };
