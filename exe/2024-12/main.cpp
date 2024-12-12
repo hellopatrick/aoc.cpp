@@ -103,7 +103,6 @@ int main() {
     auto part2 = 0;
 
     auto seen = Region();
-    auto regions = std::vector<Region>();
 
     for (int x = 0; x < data.w; x++) {
         for (int y = 0; y < data.h; y++) {
@@ -112,14 +111,11 @@ int main() {
             }
 
             auto region = fill(data, {x, y});
-            regions.push_back(region);
             seen.insert(region.begin(), region.end());
-        }
-    }
 
-    for (auto region : regions) {
-        part1 += region.size() * perimeter(region);
-        part2 += region.size() * sides(region);
+            part1 += region.size() * perimeter(region);
+            part2 += region.size() * sides(region);
+        }
     }
 
     auto end = std::chrono::high_resolution_clock::now();
