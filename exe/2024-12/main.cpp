@@ -84,8 +84,7 @@ int sides(Region &r) {
                     corners++;
                 }
 
-                aoc::Coord diag = {h.x, v.y};
-                if (r.contains(v) && r.contains(h) && !r.contains(diag)) {
+                if (r.contains(v) && r.contains(h) && !r.contains({h.x, v.y})) {
                     corners++;
                 }
             }
@@ -119,7 +118,6 @@ int main() {
     }
 
     for (auto region : regions) {
-        auto any = *region.begin();
         part1 += region.size() * perimeter(region);
         part2 += region.size() * sides(region);
     }
