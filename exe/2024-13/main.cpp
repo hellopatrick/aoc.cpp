@@ -21,12 +21,8 @@ using Puzzle = std::vector<Machine>;
 Puzzle parse_stdin() {
     Puzzle p;
 
-    while (true) {
-        auto result =
-            scn::scan<int64_t, int64_t>(stdin, "Button A: X+{}, Y+{}\n");
-        if (!result.has_value()) {
-            break;
-        }
+    while (auto result =
+               scn::scan<int64_t, int64_t>(stdin, "Button A: X+{}, Y+{}\n")) {
 
         auto [ax, ay] = result->values();
         Button a = {ax, ay};
