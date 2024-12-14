@@ -1,8 +1,0 @@
-[ 42%] Built target aoc
-[ 71%] Built target scn
-[ 85%] Building CXX object exe/2024-14/CMakeFiles/2024-14.dir/main.cpp.o
-[100%] Linking CXX executable 2024-14
-[100%] Built target 2024-14
-part 1: 218619120
-part 2: 0
-dur:    0us
