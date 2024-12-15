@@ -3,7 +3,9 @@
 #include "lib.h"
 
 #include <chrono>
+#include <csignal>
 #include <print>
+#include <stdexcept>
 #include <vector>
 
 using grid = aoc::grid<char>;
@@ -106,7 +108,7 @@ void push(grid &g, aoc::Coord pt, aoc::Coord d) {
     auto space = g[next];
 
     if (space == '#') {
-        return;
+        throw std::runtime_error("can_move failed!");
     }
 
     if (space == 'O') {
