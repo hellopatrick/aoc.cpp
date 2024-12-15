@@ -3,22 +3,24 @@
 #include "lib.h"
 
 #include <chrono>
-#include <iostream>
 #include <print>
 #include <vector>
 
-using Puzzle = std::pair<aoc::grid<char>, std::vector<aoc::Coord>>;
+using Puzzle =
+    std::tuple<aoc::grid<char>, aoc::grid<char>, std::vector<aoc::Coord>>;
 
 Puzzle parse_stdin() {
     auto lines = aoc::readlines();
 
     auto i = lines.begin();
-    auto g = std::vector<std::vector<char>>();
+    auto g1 = std::vector<std::vector<char>>();
+    auto g2 = std::vector<std::vector<char>>();
 
     while (i != lines.end()) {
         auto line = *i;
 
-        auto row = std::vector<char>();
+        auto row1 = std::vector<char>();
+        auto row2 = std::vector<char>();
 
         if (line.empty()) {
             i++;
@@ -26,14 +28,27 @@ Puzzle parse_stdin() {
         }
 
         for (auto c : line) {
-            row.push_back(c);
+            row1.push_back(c);
+
+            if (c == '#') {
+                row2.push_back('#');
+                row2.push_back('#');
+            } else if (c == 'O') {
+                row2.push_back('[');
+                row2.push_back(']');
+            } else if (c == '@') {
+                row2.push_back('@');
+                row2.push_back('.');
+            } else if (c == '.') {
+                row2.push_back('.');
+                row2.push_back('.');
+            }
         }
 
-        g.push_back(row);
+        g1.push_back(row1);
+        g2.push_back(row2);
         i++;
     }
-
-    auto map = aoc::grid<char>(g);
 
     auto dirs = std::vector<aoc::Coord>();
 
@@ -55,90 +70,106 @@ Puzzle parse_stdin() {
         i++;
     }
 
-    return {map, dirs};
+    return {aoc::grid<char>(g1), aoc::grid<char>(g2), dirs};
 }
 
-aoc::Coord push(aoc::grid<char> &g, aoc::Coord robot, aoc::Coord d) {
-    aoc::Coord next = {robot.x + d.x, robot.y + d.y};
+bool can_move(aoc::grid<char> &g, aoc::Coord pt, aoc::Coord d) {
+    aoc::Coord next = {pt.x + d.x, pt.y + d.y};
 
-    auto found_free = false;
+    auto space = g[next];
 
-    int shoves = 0;
-
-    while (g[next] != '#') {
-        if (g[next] == '.') {
-            found_free = true;
-            break;
+    if (space == '#') {
+        return false;
+    } else if (space == '.') {
+        return true;
+    } else if (space == 'O') {
+        return can_move(g, next, d);
+    } else if (space == '[') {
+        if (d.x == 0) {
+            return can_move(g, next, d) && can_move(g, next.east(), d);
+        } else {
+            return can_move(g, next, d);
         }
-
-        next = {next.x + d.x, next.y + d.y};
-        shoves++;
+    } else if (space == ']') {
+        if (d.x == 0) {
+            return can_move(g, next.west(), d) && can_move(g, next, d);
+        } else {
+            return can_move(g, next, d);
+        }
     }
 
-    if (!found_free) {
-        return robot;
+    return false;
+};
+
+void push(aoc::grid<char> &g, aoc::Coord pt, aoc::Coord d) {
+    aoc::Coord next = {pt.x + d.x, pt.y + d.y};
+    auto space = g[next];
+
+    if (space == '#') {
+        return;
     }
 
-    next = {robot.x + d.x, robot.y + d.y};
-
-    g.g[next.y][next.x] = '.';
-
-    for (int i = 0; i < shoves; i++) {
-        next = {next.x + d.x, next.y + d.y};
-        g.g[next.y][next.x] = 'O';
+    if (space == 'O') {
+        push(g, next, d);
+    } else if (space == '[') {
+        if (d.x == 0) {
+            push(g, next, d);
+            push(g, next.east(), d);
+        } else {
+            push(g, next, d);
+        }
+    } else if (space == ']') {
+        if (d.x == 0) {
+            push(g, next.west(), d);
+            push(g, next, d);
+        } else {
+            push(g, next, d);
+        }
     }
 
-    return {robot.x + d.x, robot.y + d.y};
+    g.g[next.y][next.x] = g.g[pt.y][pt.x];
+    g.g[pt.y][pt.x] = '.';
 }
 
 void simulate(aoc::grid<char> &g, std::vector<aoc::Coord> dirs) {
     auto robot = g.find('@').value();
 
-    std::println("{}, {}", robot.x, robot.y);
-
     g.g[robot.y][robot.x] = '.';
 
     for (auto &d : dirs) {
-        aoc::Coord next = {robot.x + d.x, robot.y + d.y};
-
-        if (g[next] == '#') {
-        } else if (g[next] == '.') {
-            robot = next;
-        } else if (g[next] == 'O') {
-            robot = push(g, robot, d);
-        }
-
-        for (int y = 0; y < g.h; y++) {
-            for (int x = 0; x < g.w; x++) {
-                if (x == robot.x && y == robot.y) {
-                    std::cout << '@';
-                } else {
-                    std::cout << g.g[y][x];
-                }
-            }
-            std::cout << std::endl;
+        if (can_move(g, robot, d)) {
+            push(g, robot, d);
+            robot = {robot.x + d.x, robot.y + d.y};
         }
     }
 }
 
 int main() {
-    auto [map, dirs] = parse_stdin();
+    auto [simple, expanded, dirs] = parse_stdin();
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    simulate(map, dirs);
+    auto part1 = 0;
+    simulate(simple, dirs);
 
-    int64_t part1 = 0;
-
-    for (int64_t y = 0; y < map.h; y++) {
-        for (int64_t x = 0; x < map.w; x++) {
-            if (map[{x, y}] == 'O') {
+    for (auto y = 0; y < simple.h; y++) {
+        for (auto x = 0; x < simple.w; x++) {
+            if (simple[{x, y}] == 'O') {
                 part1 += (100L * y) + x;
             }
         }
     }
 
     auto part2 = 0;
+    simulate(expanded, dirs);
+
+    for (auto y = 0; y < expanded.h; y++) {
+        for (auto x = 0; x < expanded.w; x++) {
+            if (expanded[{x, y}] == '[') {
+                part2 += (100L * y) + x;
+            }
+        }
+    }
 
     auto end = std::chrono::high_resolution_clock::now();
     auto dur =
