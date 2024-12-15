@@ -134,7 +134,7 @@ void push(grid &g, aoc::Coord pt, aoc::Coord d) {
 }
 
 void simulate(grid &g, std::vector<aoc::Coord> dirs) {
-    auto robot = g.find('@').value();
+    auto robot = *g.find('@');
 
     g.g[robot.y][robot.x] = '.';
 

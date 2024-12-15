@@ -32,9 +32,9 @@ auto solve(Puzzle const &p, bool uniq) -> int {
 
     for (int y = 0; y < p.h; y++) {
         for (int x = 0; x < p.w; x++) {
-            auto a = p[{x, y}];
+            auto a = p.get({x, y});
 
-            if (*a != 0) {
+            if (a != 0) {
                 continue;
             }
 
@@ -55,23 +55,27 @@ auto solve(Puzzle const &p, bool uniq) -> int {
                     v.insert(pt);
                 }
 
-                auto val = *p[pt];
+                auto val = p.get(pt);
+
+                if (!val) {
+                    continue;
+                }
 
                 if (val == 9) {
                     sum++;
                     continue;
                 }
 
-                if (val + 1 == p[{pt.x, pt.y - 1}]) {
+                if (*val + 1 == p.get({pt.x, pt.y - 1})) {
                     q.emplace(pt.x, pt.y - 1);
                 }
-                if (val + 1 == p[{pt.x - 1, pt.y}]) {
+                if (*val + 1 == p.get({pt.x - 1, pt.y})) {
                     q.emplace(pt.x - 1, pt.y);
                 }
-                if (val + 1 == p[{pt.x, pt.y + 1}]) {
+                if (*val + 1 == p.get({pt.x, pt.y + 1})) {
                     q.emplace(pt.x, pt.y + 1);
                 }
-                if (val + 1 == p[{pt.x + 1, pt.y}]) {
+                if (*val + 1 == p.get({pt.x + 1, pt.y})) {
                     q.emplace(pt.x + 1, pt.y);
                 }
             }

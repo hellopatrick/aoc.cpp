@@ -32,7 +32,7 @@ using Region = std::unordered_set<aoc::Coord, aoc::CoordHasher>;
 Region fill(Puzzle &p, aoc::Coord start) {
     Region r;
 
-    char c = *p[start];
+    char c = p[start];
 
     auto q = std::queue<aoc::Coord>();
     q.push(start);
@@ -47,7 +47,7 @@ Region fill(Puzzle &p, aoc::Coord start) {
 
         auto dirs = {next.north(), next.south(), next.east(), next.west()};
         for (auto &d : dirs) {
-            if (p[d] == c) {
+            if (p.get(d) == c) {
                 q.push(d);
             }
         }
