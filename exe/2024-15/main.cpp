@@ -6,8 +6,8 @@
 #include <print>
 #include <vector>
 
-using Puzzle =
-    std::tuple<aoc::grid<char>, aoc::grid<char>, std::vector<aoc::Coord>>;
+using grid = aoc::grid<char>;
+using Puzzle = std::tuple<grid, grid, std::vector<aoc::Coord>>;
 
 Puzzle parse_stdin() {
     auto lines = aoc::readlines();
@@ -70,10 +70,10 @@ Puzzle parse_stdin() {
         i++;
     }
 
-    return {aoc::grid<char>(g1), aoc::grid<char>(g2), dirs};
+    return {grid(g1), grid(g2), dirs};
 }
 
-bool can_move(aoc::grid<char> &g, aoc::Coord pt, aoc::Coord d) {
+bool can_move(grid &g, aoc::Coord pt, aoc::Coord d) {
     aoc::Coord next = {pt.x + d.x, pt.y + d.y};
 
     auto space = g[next];
@@ -101,7 +101,7 @@ bool can_move(aoc::grid<char> &g, aoc::Coord pt, aoc::Coord d) {
     return false;
 };
 
-void push(aoc::grid<char> &g, aoc::Coord pt, aoc::Coord d) {
+void push(grid &g, aoc::Coord pt, aoc::Coord d) {
     aoc::Coord next = {pt.x + d.x, pt.y + d.y};
     auto space = g[next];
 
@@ -131,7 +131,7 @@ void push(aoc::grid<char> &g, aoc::Coord pt, aoc::Coord d) {
     g.g[pt.y][pt.x] = '.';
 }
 
-void simulate(aoc::grid<char> &g, std::vector<aoc::Coord> dirs) {
+void simulate(grid &g, std::vector<aoc::Coord> dirs) {
     auto robot = g.find('@').value();
 
     g.g[robot.y][robot.x] = '.';
