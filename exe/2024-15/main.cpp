@@ -2,9 +2,7 @@
 #include "grid.h"
 #include "lib.h"
 
-#include <cassert>
 #include <chrono>
-#include <csignal>
 #include <print>
 #include <stdexcept>
 #include <vector>
