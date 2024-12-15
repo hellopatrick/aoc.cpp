@@ -3,6 +3,7 @@
 #include "coord.h"
 
 #include <__ios/fpos.h>
+#include <__ostream/print.h>
 #include <cstddef>
 #include <optional>
 #include <vector>
@@ -28,5 +29,17 @@ template <typename T> struct grid {
 
         return g[c.y][c.x];
     };
+
+    std::optional<Coord> find(T const t) const {
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                if (g[y][x] == t) {
+                    return std::optional<Coord>({x, y});
+                }
+            }
+        }
+
+        return std::nullopt;
+    }
 };
 } // namespace aoc
