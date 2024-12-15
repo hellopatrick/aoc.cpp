@@ -2,6 +2,7 @@
 #include "grid.h"
 #include "lib.h"
 
+#include <cassert>
 #include <chrono>
 #include <csignal>
 #include <print>
@@ -78,7 +79,7 @@ Puzzle parse_stdin() {
 bool can_move(grid &g, aoc::Coord pt, aoc::Coord d) {
     aoc::Coord next = {pt.x + d.x, pt.y + d.y};
 
-    auto space = g[next];
+    auto space = g.get(next);
 
     if (space == '#') {
         return false;
@@ -129,8 +130,8 @@ void push(grid &g, aoc::Coord pt, aoc::Coord d) {
         }
     }
 
-    g.g[next.y][next.x] = g.g[pt.y][pt.x];
-    g.g[pt.y][pt.x] = '.';
+    g[{next.x, next.y}] = g[{pt.x, pt.y}];
+    g[{pt.x, pt.y}] = '.';
 }
 
 void simulate(grid &g, std::vector<aoc::Coord> dirs) {
@@ -177,7 +178,7 @@ int main() {
     auto dur =
         std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
-    std::print("part 1: {}\n", part1);
-    std::print("part 2: {}\n", part2);
+    std::print("part 1: {} ({})\n", part1, part1 == 1430439);
+    std::print("part 2: {} ({})\n", part2, part2 == 1458740);
     std::print("dur:    {}us\n", dur.count());
 }
