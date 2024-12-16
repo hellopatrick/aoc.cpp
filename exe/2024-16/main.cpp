@@ -1,15 +1,130 @@
+#include "coord.h"
+#include "grid.h"
 #include "lib.h"
 
 #include <chrono>
+#include <complex>
+#include <cstdint>
+#include <functional>
 #include <print>
+#include <queue>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
-using Puzzle = std::vector<int>;
+using Maze = aoc::grid<char>;
 
-Puzzle parse_stdin() {
-    Puzzle p;
+Maze parse_stdin() {
+    std::vector<std::vector<char>> p;
 
-    return p;
+    auto lines = aoc::readlines();
+    for (auto line : lines) {
+        auto row = std::vector<char>();
+
+        for (auto c : line) {
+            row.push_back(c);
+        }
+
+        p.push_back(row);
+    }
+
+    return aoc::grid<char>(p);
+}
+
+using Path = std::pair<aoc::Coord, std::complex<int64_t>>;
+
+std::vector<std::pair<Path, int>> neighbors(Maze m, Path p) {
+    std::vector<std::pair<Path, int>> ns;
+
+    auto [pt, f] = p;
+
+    aoc::Coord fn = {pt.x + f.real(), pt.y + f.imag()};
+    if (m.get(fn) == '.') {
+        ns.push_back({{fn, f}, 1});
+    }
+
+    auto l = f * std::complex<int64_t>(0, 1);
+    aoc::Coord ln = {pt.x + l.real(), pt.y + l.imag()};
+    if (m.get(ln) == '.') {
+        ns.push_back({{ln, l}, 1001});
+    }
+
+    auto r = f * std::complex<int64_t>(0, -1);
+    aoc::Coord rn = {pt.x + r.real(), pt.y + r.imag()};
+    if (m.get(rn) == '.') {
+        ns.push_back({{rn, r}, 1001});
+    }
+
+    return ns;
+}
+
+struct PathHasher {
+    size_t operator()(const Path &p) const {
+        auto h = aoc::CoordHasher{};
+        auto inthash = std::hash<int64_t>();
+
+        return h(p.first) ^ (inthash(p.second.real()) << 2) ^
+               (inthash(p.second.imag()) << 4);
+    }
+};
+
+int64_t walk(Maze m, aoc::Coord start, aoc::Coord end) {
+    std::unordered_map<Path, int64_t, PathHasher> dist;
+
+    std::unordered_map<Path, std::unordered_set<aoc::Coord, aoc::CoordHasher>,
+                       PathHasher>
+        paths;
+
+    auto cmp = [](const std::pair<Path, int64_t> &a,
+                  const std::pair<Path, int64_t> &b) {
+        return a.second > b.second;
+    };
+
+    std::priority_queue<std::pair<Path, int64_t>,
+                        std::vector<std::pair<Path, int64_t>>, decltype(cmp)>
+        pq(cmp);
+
+    pq.push({Path{start, {1, 0}}, 0});
+
+    paths[Path{start, {1, 0}}] =
+        std::unordered_set<aoc::Coord, aoc::CoordHasher>();
+
+    while (!pq.empty()) {
+        auto [path, d] = pq.top();
+        pq.pop();
+
+        auto [pt, f] = path;
+
+        if (dist.contains(path)) {
+            if (dist[path] >= d) {
+                dist[path] = d;
+            } else {
+                continue;
+            }
+        } else {
+            dist[path] = d;
+        }
+
+        auto ns = neighbors(m, path);
+
+        for (auto [next, cost] : ns) {
+            pq.push({next, d + cost});
+        }
+    }
+
+    auto min = INT64_MAX;
+
+    for (auto [k, v] : dist) {
+        auto [pt, _] = k;
+
+        if (pt.x == end.x && pt.y == end.y) {
+            if (v < min) {
+                min = v;
+            }
+        }
+    }
+
+    return min;
 }
 
 int main() {
@@ -17,11 +132,19 @@ int main() {
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    auto part1 = 0;
+    auto sp = data.find('S').value();
+    data[sp] = '.';
+
+    auto ep = data.find('E').value();
+    data[ep] = '.';
+
+    auto part1 = walk(data, sp, ep);
+
     auto part2 = 0;
 
     auto end = std::chrono::high_resolution_clock::now();
-    auto dur = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    auto dur =
+        std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
     std::print("part 1: {}\n", part1);
     std::print("part 2: {}\n", part2);
