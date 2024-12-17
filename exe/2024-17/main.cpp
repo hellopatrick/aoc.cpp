@@ -31,7 +31,7 @@ Puzzle parse_stdin() {
     p.b = scn::scan<int64_t>(stdin, "Register B: {}\n")->value();
     p.c = scn::scan<int64_t>(stdin, "Register C: {}\n")->value();
 
-    auto discard = scn::scan(stdin, "Program: ");
+    auto _ = scn::scan(stdin, "Program: ");
 
     auto ops = Program();
 
@@ -62,16 +62,6 @@ int64_t combo(Machine &m, int op) {
     }
 }
 
-int64_t pow(int64_t base, int64_t exp) {
-    int64_t res = 1;
-
-    for (auto i = 0; i < exp; i++) {
-        res *= base;
-    }
-
-    return res;
-}
-
 Machine execute(Machine m, const Program &p) {
     int pc = 0;
     while (pc + 1 < p.size()) {
@@ -79,21 +69,18 @@ Machine execute(Machine m, const Program &p) {
         int co = p[pc + 1];
 
         if (op == 0) {
-            m.a = m.a >> combo(m, co);
+            m.a = m.a >> combo(m, co); // dividing by power of 2.
         } else if (op == 1) {
             m.b = m.b ^ co;
         } else if (op == 2) {
             m.b = combo(m, co) % 8;
-        } else if (op == 3) {
-            if (m.a != 0) {
-                pc = co;
-                continue;
-            }
+        } else if (op == 3 && m.a != 0) {
+            pc = co;
+            continue;
         } else if (op == 4) {
             m.b = m.b ^ m.c;
         } else if (op == 5) {
-            auto v = combo(m, co) % 8;
-            m.tape.push_back(v);
+            m.tape.push_back(combo(m, co) % 8);
         } else if (op == 6) {
             m.b = m.a >> combo(m, co);
         } else if (op == 7) {
@@ -106,6 +93,7 @@ Machine execute(Machine m, const Program &p) {
     return m;
 }
 
+// "decompiled" puzzle input.
 int64_t compute(int64_t a) {
     auto b = (a % 8) ^ 1;
     auto c = a >> b;
@@ -116,19 +104,22 @@ int64_t compute(int64_t a) {
     return b % 8;
 }
 
-int64_t solve(const Program &p, int64_t res, int i) {
-    if (i == p.size()) {
+int64_t solve(const Program &p, int64_t res, int64_t i) {
+    if (i < 0) {
         return res;
+    } else if (i >= p.size()) {
+        return -1;
     }
 
-    int64_t target = p[p.size() - i - 1];
+    int64_t target = p[i];
 
     for (int a = 0; a < 8; a++) {
-        if (compute((res << 3) + a) == target) {
-            auto attempt = solve(p, (res << 3) + a, i + 1);
+        auto attempt = (res << 3) + a;
+        if (compute(attempt) == target) {
+            auto v = solve(p, attempt, i - 1);
 
-            if (attempt != -1) {
-                return attempt;
+            if (v != -1) {
+                return v;
             }
         }
     }
@@ -144,7 +135,7 @@ int main() {
     auto p1 = execute(machine, ops);
 
     auto part1 = p1.result();
-    auto part2 = solve(ops, 0, 0);
+    auto part2 = solve(ops, 0, ops.size() - 1);
 
     auto end = std::chrono::high_resolution_clock::now();
     auto dur =
