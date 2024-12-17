@@ -21,18 +21,7 @@ struct Machine {
     }
 };
 
-enum Op {
-    ADV,
-    BXL,
-    BST,
-    JNZ,
-    BXC,
-    OUT,
-    BDV,
-    CDV,
-};
-
-using Program = std::vector<int>;
+using Program = std::vector<int64_t>;
 using Puzzle = std::pair<Machine, Program>;
 
 Puzzle parse_stdin() {
@@ -47,7 +36,7 @@ Puzzle parse_stdin() {
     auto ops = Program();
 
     while (true) {
-        if (auto o = scn::scan<int>(stdin, "{}")) {
+        if (auto o = scn::scan<int64_t>(stdin, "{}")) {
             ops.push_back(o->value());
         } else {
             break;
