@@ -13,7 +13,7 @@ struct Machine {
     std::vector<int> tape;
 
     std::string result() {
-        return std::accumulate(tape.begin(), tape.end(), std::string(""),
+        return std::accumulate(tape.begin(), tape.end(), std::string(),
                                [](const std::string &a, const int &b) {
                                    return a + (a.empty() ? "" : ",") +
                                           std::to_string(b);
