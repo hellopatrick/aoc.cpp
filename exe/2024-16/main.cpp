@@ -6,6 +6,7 @@
 #include <complex>
 #include <cstdint>
 #include <functional>
+#include <iostream>
 #include <print>
 #include <queue>
 #include <unordered_map>
@@ -68,11 +69,10 @@ struct PathHasher {
     }
 };
 
-int64_t walk(Maze m, aoc::Coord start, aoc::Coord end) {
+std::pair<int64_t, int64_t> walk(Maze m, aoc::Coord start, aoc::Coord end) {
     std::unordered_map<Path, int64_t, PathHasher> dist;
 
-    std::unordered_map<Path, std::unordered_set<aoc::Coord, aoc::CoordHasher>,
-                       PathHasher>
+    std::unordered_map<Path, std::unordered_set<Path, PathHasher>, PathHasher>
         paths;
 
     auto cmp = [](const std::pair<Path, int64_t> &a,
@@ -86,8 +86,7 @@ int64_t walk(Maze m, aoc::Coord start, aoc::Coord end) {
 
     pq.push({Path{start, {1, 0}}, 0});
 
-    paths[Path{start, {1, 0}}] =
-        std::unordered_set<aoc::Coord, aoc::CoordHasher>();
+    paths[Path{start, {1, 0}}] = std::unordered_set<Path, PathHasher>();
 
     while (!pq.empty()) {
         auto [path, d] = pq.top();
@@ -95,22 +94,34 @@ int64_t walk(Maze m, aoc::Coord start, aoc::Coord end) {
 
         auto [pt, f] = path;
 
-        if (dist.contains(path)) {
-            if (dist[path] >= d) {
-                dist[path] = d;
-            } else {
-                continue;
-            }
-        } else {
-            dist[path] = d;
-        }
-
         auto ns = neighbors(m, path);
 
         for (auto [next, cost] : ns) {
+            if (!paths.contains(next)) {
+                paths[next] = std::unordered_set<Path, PathHasher>{};
+            }
+
+            if (dist.contains(next)) {
+                if (dist[next] > d + cost) {
+                    dist[next] = d + cost;
+                    paths[next] = std::unordered_set<Path, PathHasher>{path};
+                } else if (dist[next] == d + cost) {
+                    paths[next].emplace(path);
+                    continue;
+                } else {
+                    continue;
+                }
+            } else {
+                dist[next] = d + cost;
+                paths[next].emplace(path);
+            }
+
             pq.push({next, d + cost});
         }
     }
+
+    auto tiles = std::unordered_set<aoc::Coord, aoc::CoordHasher>();
+    auto queue = std::queue<Path>();
 
     auto min = INT64_MAX;
 
@@ -124,7 +135,36 @@ int64_t walk(Maze m, aoc::Coord start, aoc::Coord end) {
         }
     }
 
-    return min;
+    for (auto [k, v] : dist) {
+        auto [pt, _] = k;
+
+        if (pt.x == end.x && pt.y == end.y) {
+            if (v == min) {
+                queue.push(k);
+            }
+        }
+    }
+
+    while (!queue.empty()) {
+        auto p = queue.front();
+        auto [pt, _] = p;
+        queue.pop();
+
+        tiles.insert(pt);
+
+        auto s = paths[p];
+
+        queue.push_range(s);
+    }
+
+    for (int y = 0; y < m.h; y++) {
+        for (int x = 0; x < m.w; x++) {
+            std::cout << (tiles.contains({x, y}) ? 'O' : m[{x, y}]);
+        }
+        std::cout << std::endl;
+    }
+
+    return {min, tiles.size()};
 }
 
 int main() {
@@ -138,15 +178,13 @@ int main() {
     auto ep = data.find('E').value();
     data[ep] = '.';
 
-    auto part1 = walk(data, sp, ep);
-
-    auto part2 = 0;
+    auto [part1, part2] = walk(data, sp, ep);
 
     auto end = std::chrono::high_resolution_clock::now();
     auto dur =
         std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
-    std::print("part 1: {}\n", part1);
-    std::print("part 2: {}\n", part2);
+    std::print("part 1: {} -> {}\n", part1, part1 == 101492);
+    std::print("part 2: {} -> {}\n", part2, part2 == 543);
     std::print("dur:    {}us\n", dur.count());
 }
