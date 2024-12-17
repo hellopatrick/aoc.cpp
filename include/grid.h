@@ -1,9 +1,6 @@
 #pragma once
 
 #include "coord.h"
-
-#include <__ios/fpos.h>
-#include <__ostream/print.h>
 #include <cstddef>
 #include <optional>
 #include <vector>
