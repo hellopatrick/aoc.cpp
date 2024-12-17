@@ -1,5 +1,6 @@
 #include <chrono>
 #include <cstdint>
+#include <format>
 #include <numeric>
 #include <print>
 #include <scn/scan.h>
@@ -15,8 +16,9 @@ struct Machine {
     std::string result() {
         return std::accumulate(tape.begin(), tape.end(), std::string(),
                                [](const std::string &a, const int &b) {
-                                   return a + (a.empty() ? "" : ",") +
-                                          std::to_string(b);
+                                   return a.empty()
+                                              ? std::to_string(b)
+                                              : std::format("{},{}", a, b);
                                });
     }
 };
