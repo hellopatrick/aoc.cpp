@@ -51,16 +51,20 @@ Puzzle parse_stdin() {
 }
 
 int64_t combo(Machine &m, int op) {
-    if (op <= 3) {
+    switch (op) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
         return op;
-    } else if (op == 4) {
+    case 4:
         return m.a;
-    } else if (op == 5) {
+    case 5:
         return m.b;
-    } else if (op == 6) {
+    case 6:
         return m.c;
-    } else {
-        throw std::runtime_error("invalid op");
+    default:
+        throw std::runtime_error(std::format("invalid opcode={}", op));
     }
 }
 
