@@ -1,8 +1,6 @@
-#include "lib.h"
 #include "scn/scan.h"
 
 #include <chrono>
-#include <iostream>
 #include <print>
 #include <vector>
 
