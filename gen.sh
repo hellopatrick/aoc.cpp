@@ -1,7 +1,7 @@
 #!/bin/bash
 
 day=$1
-year=$(date +"%Y")
+year=${2:-$(date +"%Y")}
 name="${year}-${day}"
 exe="exe/${name}"
 
@@ -46,3 +46,5 @@ int main() {
 EOF
 
 touch "testdata/${name}.txt"
+
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release

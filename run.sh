@@ -1,7 +1,7 @@
 #!/bin/bash
 
 day=$1
-year=$(date +"%Y")
+year=${2:-$(date +"%Y")}
 name="${year}-${day}"
 
 cmake --build build --target $name
