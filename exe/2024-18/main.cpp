@@ -25,18 +25,20 @@ Puzzle parse_stdin() {
     return p;
 }
 
+auto cmp = [](const std::pair<aoc::Coord, int64_t> &a,
+              const std::pair<aoc::Coord, int64_t> &b) {
+    return a.second > b.second;
+};
+
+using PriorityQueue =
+    std::priority_queue<std::pair<aoc::Coord, int64_t>,
+                        std::vector<std::pair<aoc::Coord, int64_t>>,
+                        decltype(cmp)>;
+
 auto walk(aoc::grid<char> &g) -> std::optional<int> {
     std::unordered_map<aoc::Coord, int64_t, aoc::CoordHasher> dists;
 
-    auto cmp = [](const std::pair<aoc::Coord, int64_t> &a,
-                  const std::pair<aoc::Coord, int64_t> &b) {
-        return a.second > b.second;
-    };
-
-    std::priority_queue<std::pair<aoc::Coord, int64_t>,
-                        std::vector<std::pair<aoc::Coord, int64_t>>,
-                        decltype(cmp)>
-        pq(cmp);
+    PriorityQueue pq(cmp);
 
     dists[{0, 0}] = 0;
     pq.push({{0, 0}, 0});
@@ -44,6 +46,11 @@ auto walk(aoc::grid<char> &g) -> std::optional<int> {
     while (!pq.empty()) {
         auto [curr, d] = pq.top();
         pq.pop();
+
+        // exit early, doesn't help much?
+        if (curr.x == 70 && curr.y == 70) {
+            break;
+        }
 
         auto nexts = {curr.east(), curr.west(), curr.north(), curr.south()};
 
