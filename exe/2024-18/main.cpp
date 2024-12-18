@@ -5,6 +5,7 @@
 #include "scn/scan.h"
 
 #include <chrono>
+#include <optional>
 #include <print>
 #include <unordered_map>
 #include <vector>
@@ -24,8 +25,7 @@ Puzzle parse_stdin() {
     return p;
 }
 
-auto walk(aoc::grid<char> &g)
-    -> std::unordered_map<aoc::Coord, int64_t, aoc::CoordHasher> {
+auto walk(aoc::grid<char> &g) -> std::optional<int> {
     std::unordered_map<aoc::Coord, int64_t, aoc::CoordHasher> dists;
 
     auto cmp = [](const std::pair<aoc::Coord, int64_t> &a,
@@ -64,7 +64,11 @@ auto walk(aoc::grid<char> &g)
         }
     }
 
-    return dists;
+    if (dists.contains({70, 70})) {
+        return dists[{70, 70}];
+    }
+
+    return std::nullopt;
 }
 
 int main() {
@@ -86,30 +90,34 @@ int main() {
         grid[c] = '#';
     }
 
-    auto dists = walk(grid);
-    auto part1 = dists[{70, 70}];
+    auto part1 = walk(grid);
 
-    auto i = 1024;
-    aoc::Coord part2;
+    auto p = 0;
+    auto q = data.size() - 1;
 
-    while (i < data.size()) {
-        auto block = data[i];
-        grid[block] = '#';
+    while (p + 1 < q) {
+        auto mp = (p + q) / 2;
 
-        auto dists = walk(grid);
-        if (!dists.contains({70, 70})) {
-            part2 = block;
-            break;
+        for (int i = 0; i < data.size(); i++) {
+            grid[data[i]] = i <= mp ? '#' : '.';
         }
 
-        i++;
+        auto dist = walk(grid);
+
+        if (dist.has_value()) {
+            p = mp;
+        } else {
+            q = mp;
+        }
     }
+
+    aoc::Coord part2 = data[q];
 
     auto end = std::chrono::high_resolution_clock::now();
     auto dur =
         std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
-    std::print("part 1: {}\n", part1);
+    std::print("part 1: {}\n", part1.value());
     std::print("part 2: {},{}\n", part2.x, part2.y);
     std::print("dur:    {}us\n", dur.count());
 }
