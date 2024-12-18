@@ -99,7 +99,7 @@ int main() {
 
     auto part1 = walk(grid);
 
-    auto p = 0;
+    auto p = 1024; // know 1024 is okay from part1
     auto q = data.size() - 1;
 
     while (p + 1 < q) {
