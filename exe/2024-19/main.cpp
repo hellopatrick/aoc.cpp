@@ -6,8 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
-using StringVector = std::vector<std::string>;
-using Puzzle = std::pair<StringVector, StringVector>;
+using Puzzle = std::pair<std::vector<std::string>, std::vector<std::string>>;
 
 Puzzle parse_stdin() {
     Puzzle p;
@@ -15,14 +14,19 @@ Puzzle parse_stdin() {
     auto lines = aoc::readlines();
 
     auto towels = aoc::split(lines[0], ", ");
-    auto patterns = StringVector(lines.begin() + 2, lines.end());
+    auto patterns = std::vector<std::string>(lines.begin() + 2, lines.end());
 
     return {towels, patterns};
 }
 
-auto cache = std::unordered_map<std::string, int64_t>();
+auto cache = std::unordered_map<std::string_view, int64_t>();
 
-int64_t combinations(const std::string &pattern, const StringVector &towels) {
+int64_t combinations(const std::string_view &pattern,
+                     const std::vector<std::string> &towels) {
+    if (pattern.size() == 0) {
+        return 1;
+    }
+
     if (auto a = cache.find(pattern); a != cache.end()) {
         return a->second;
     }
@@ -30,19 +34,12 @@ int64_t combinations(const std::string &pattern, const StringVector &towels) {
     int64_t total = 0;
 
     for (auto &towel : towels) {
-        if (auto loc = pattern.find(towel); loc == 0) {
-            if (pattern.size() == towel.size()) {
-                total += 1;
-            } else {
-                total +=
-                    combinations(pattern.substr(loc + towel.size()), towels);
-            }
-        }
+        total += pattern.starts_with(towel)
+                     ? combinations(pattern.substr(towel.size()), towels)
+                     : 0;
     }
 
-    cache[pattern] = total;
-
-    return total;
+    return cache[pattern] = total;
 }
 
 int main() {
