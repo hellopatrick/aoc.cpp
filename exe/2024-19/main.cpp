@@ -1,4 +1,4 @@
-#include "read.h"
+#include "lib.h"
 #include <chrono>
 #include <functional>
 #include <numeric>
@@ -23,7 +23,7 @@ auto cache = std::unordered_map<std::string_view, int64_t>();
 
 int64_t combinations(const std::string_view &pattern,
                      const std::vector<std::string> &towels) {
-    if (pattern.size() == 0) {
+    if (pattern.empty()) {
         return 1;
     }
 
