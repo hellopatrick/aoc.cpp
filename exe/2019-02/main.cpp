@@ -1,3 +1,4 @@
+#include "intcode.h"
 #include "scn/scan.h"
 
 #include <chrono>
@@ -50,10 +51,9 @@ int main() {
     data[1] = 12;
     data[2] = 2;
 
-    std::vector<int> part1;
-    part1.append_range(data);
+    aoc::vm part1(data);
 
-    simulate(part1);
+    part1.simulate();
 
     auto part2 = 0;
     auto target = 19690720;
@@ -62,13 +62,12 @@ int main() {
     int v = 0;
     for (n = 0; n < data.size(); n++) {
         for (v = 0; v < data.size(); v++) {
-            std::vector<int> attempt;
-            attempt.append_range(data);
+            aoc::vm attempt(data);
 
             attempt[1] = n;
             attempt[2] = v;
 
-            simulate(attempt);
+            attempt.simulate();
 
             if (attempt[0] == target) {
                 goto found;
@@ -81,7 +80,7 @@ found:
     auto dur =
         std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
-    std::print("part 1: {}\n", part1[0]);
-    std::print("part 2: {}\n", 100 * n + v);
+    std::print("part 1: {} ({})\n", part1[0], part1[0] == 4138687);
+    std::print("part 2: {} ({})\n", 100 * n + v, 100 * n + v == 6635);
     std::print("dur:    {}us\n", dur.count());
 }
