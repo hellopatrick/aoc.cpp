@@ -1,0 +1,68 @@
+#include "read.h"
+#include <chrono>
+#include <functional>
+#include <numeric>
+#include <print>
+#include <unordered_map>
+#include <vector>
+
+using StringVector = std::vector<std::string>;
+using Puzzle = std::pair<StringVector, StringVector>;
+
+Puzzle parse_stdin() {
+    Puzzle p;
+
+    auto lines = aoc::readlines();
+
+    auto towels = aoc::split(lines[0], ", ");
+    auto patterns = StringVector(lines.begin() + 2, lines.end());
+
+    return {towels, patterns};
+}
+
+auto cache = std::unordered_map<std::string, int64_t>();
+
+int64_t combinations(const std::string &pattern, const StringVector &towels) {
+    if (auto a = cache.find(pattern); a != cache.end()) {
+        return a->second;
+    }
+
+    int64_t total = 0;
+
+    for (auto &towel : towels) {
+        if (auto loc = pattern.find(towel); loc == 0) {
+            if (pattern.size() == towel.size()) {
+                total += 1;
+            } else {
+                total +=
+                    combinations(pattern.substr(loc + towel.size()), towels);
+            }
+        }
+    }
+
+    cache[pattern] = total;
+
+    return total;
+}
+
+int main() {
+    auto [towels, patterns] = parse_stdin();
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    int64_t part1 = std::transform_reduce(
+        patterns.begin(), patterns.end(), 0L, std::plus{},
+        [&](std::string &a) { return combinations(a, towels) > 0 ? 1 : 0; });
+
+    int64_t part2 = std::transform_reduce(
+        patterns.begin(), patterns.end(), 0L, std::plus{},
+        [&](std::string &a) { return combinations(a, towels); });
+
+    auto end = std::chrono::high_resolution_clock::now();
+    auto dur =
+        std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+
+    std::print("part 1: {}\n", part1);
+    std::print("part 2: {}\n", part2);
+    std::print("dur:    {}us\n", dur.count());
+}

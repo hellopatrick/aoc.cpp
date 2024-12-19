@@ -14,8 +14,6 @@ include(../day.cmake)
 EOF
 
 cat <<EOF > "${exe}/main.cpp"
-#include "lib.h"
-
 #include <chrono>
 #include <print>
 #include <vector>
